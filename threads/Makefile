@@ -1,2 +1,2 @@
 review: threads.c
-        gcc threads.c -lpthread
+	gcc threads.c -lpthread
