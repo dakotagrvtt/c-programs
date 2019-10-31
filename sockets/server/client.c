@@ -9,12 +9,12 @@
 #include <pthread.h>
 
 int sock;
-int client;
 
 void * readthr(void * args)
 {
 	char buffer[256];
-	while(1){
+	while(1)
+	{
 		read(sock, buffer, 256);
 		printf("-- %s\n", buffer);
 	}
@@ -23,18 +23,20 @@ void * readthr(void * args)
 void * writethr(void * args)
 {
 	//reads from keyboard and writes to socket
-	char * buffer = calloc(256 * sizeof(char));
+	char * buffer = calloc(256, sizeof(char));
 	size_t buflen = 256;
-	while(1){
-		int read = getline(&buffer, &buflen, stdin);
-        	write(sock, (void*)buffer, read+1);
+	while(1)
+	{
+		int readin = getline(&buffer, &buflen, stdin);
+        	write(sock, (void*)buffer, readin+1);
 	}
+	pthread_exit(NULL);
 }
 
-int main(int argc, char*argv[])
+int main(int argc, char* argv[])
 {
 	sock = socket(AF_INET, SOCK_STREAM, 0);
-	struct hostnet * host;
+	struct hostent * host;
 	host = gethostbyname(argv[1]); //specify ip address to connect to
 
 	if(host == NULL){
@@ -54,7 +56,8 @@ int main(int argc, char*argv[])
 
 	//connecting
 	int success = connect(sock, (struct sockaddr*)&server, sizeof(struct sockaddr_in));
-	if(sock == -1){
+	if(success == -1)
+	{
 		printf("Cannot connect\n");
 		close(sock);
 		exit(1);

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -6,9 +7,35 @@
 #include <arpa/inet.h> //cpu to network api
 #include <pthread.h>
 
+int sock;
+int client;
+
+void * readthr(void * args)
+{
+	char buffer[256];
+	while(1)
+	{
+		read(client, buffer, 256);
+		printf("-- %s\n",  buffer);
+	}
+	pthread_exit(NULL);
+}
+
+void * writethr(void * args)
+{
+	char * buffer = calloc(256, sizeof(char));
+	size_t buflen = 256;
+	while(1)
+	{
+		int readin = getline (&buffer, &buflen, stdin);
+		write(client, (void*)buffer, readin+1);
+	}
+	pthread_exit(NULL);
+}
+
 int main(int argc, char*argv[])
 {
-	int sock = socket(AF_INET /*ipv4 address*/, SOCK_STREAM /*UDP*/, 0); //we now have a socket
+	sock = socket(AF_INET /*ipv4 address*/, SOCK_STREAM /*UDP*/, 0); //we now have a socket
 	struct sockaddr_in my_addr; //struct for socket creation
 	my_addr.sin_family = AF_INET; //ipv4 of address
 	my_addr.sin_port = htons(9999); //port: int to network representation of integer
@@ -25,6 +52,7 @@ int main(int argc, char*argv[])
 
 	//binding socket to a port
 	int success = bind(sock, (struct sockaddr*)&my_addr, sizeof(struct sockaddr_in));
+
 	if(success == -1){
 		printf("Error binding socket\n");
 		close(sock); //ALWAYS close socket from now on if something goes wrong
@@ -39,22 +67,20 @@ int main(int argc, char*argv[])
 		exit(1);
 	}
 
+	client = accept(sock, NULL, NULL); //blocking function, can't continue until we get a connection
+
 //      write(sock, (void*)mesg, strlen(mesg)+1);
 //      printf("Message sent!\n");
-        pthread_t r, w;
-        void * result;
-        pthread_create(&r, NULL, readthr, NULL);
-        pthread_create(&w, NULL, writethr, NULL);
-        pthread_join(r, &result);
-        pthread_join(w, &result);
-        close(sock);
+	pthread_t r, w;
+	void * result;
+	pthread_create(&r, NULL, readthr, NULL);
+	pthread_create(&w, NULL, writethr, NULL);
+	pthread_join(r, &result);
+	pthread_join(w, &result);
 
-        return 0;
-
-	int client = accept(sock, NULL, NULL); //blocking function, can't continue until we get a connection
-	char data[256];
+/*	char data[256];
 	read(client, data, 256); //read max of 256 characters
-	printf("Server got: %s", data);
+	printf("Server got: %s", data);*/
 	close(client);
 	close(sock);
 	return 0;
