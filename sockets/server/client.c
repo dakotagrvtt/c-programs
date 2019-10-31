@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <arpa/inet.h> //cpu to network api
+#include <netdb.h> //lookup by host
+#include <pthread.h>
+
+int sock;
+int client;
+
+void * readthr(void * args)
+{
+	char buffer[256];
+	while(1){
+		read(sock, buffer, 256);
+		printf("-- %s\n", buffer);
+	}
+}
+
+void * writethr(void * args)
+{
+	//reads from keyboard and writes to socket
+	char * buffer = calloc(256 * sizeof(char));
+	size_t buflen = 256;
+	while(1){
+		int read = getline(&buffer, &buflen, stdin);
+        	write(sock, (void*)buffer, read+1);
+	}
+}
+
+int main(int argc, char*argv[])
+{
+	sock = socket(AF_INET, SOCK_STREAM, 0);
+	struct hostnet * host;
+	host = gethostbyname(argv[1]); //specify ip address to connect to
+
+	if(host == NULL){
+		printf("404\n");
+		exit(1);
+	}
+
+	if(sock == -1){
+		printf("Error creating socket\n");
+		exit(1);
+	}
+
+	struct sockaddr_in server;
+	server.sin_family = AF_INET;
+	server.sin_port = htons(9999);
+	memcpy(&server.sin_addr, host->h_addr, host->h_length);
+
+	//connecting
+	int success = connect(sock, (struct sockaddr*)&server, sizeof(struct sockaddr_in));
+	if(sock == -1){
+		printf("Cannot connect\n");
+		close(sock);
+		exit(1);
+        }
+
+//	write(sock, (void*)mesg, strlen(mesg)+1);
+//	printf("Message sent!\n");
+	pthread_t r, w;
+	void * result;
+	pthread_create(&r, NULL, readthr, NULL);
+	pthread_create(&w, NULL, writethr, NULL);
+	pthread_join(r, &result);
+	pthread_join(w, &result);
+	close(sock);
+
+	return 0;
+}
