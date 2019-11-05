@@ -3,3 +3,9 @@ cpu-burst - Amount of time the process uses the processor before it is no longer
 timeslice - discrete, finite unit of time (seconds). For cpu-scheduling equal time slices are called quanta (plural of quantum).
 
 Context switch - process in which the context of the current proces is saved, the CPU is deallocated from that process, and allocated to a new process (and new context is loaded). Significantly expensive operation.
+
+Scheduling policies
+	- Non-preemptive - Process executes until CPU burst is complete
+	- Preemptive - Process can be interrupted while executing
+		- Time slice expires
+		- Higher priority may be in ready queue
