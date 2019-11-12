@@ -32,7 +32,19 @@
 
 **SRT** - Shortest remaining time
 - Long jobs may never get a chance to run.
-- Not fair, needs est of burst time
+- Not fair, needs est of burst time.
+- Process must have an expected remaining time
+	- If estimation time is bad, then *oops*
+- As optimal as can be
+	- Wait time is very low
+	- Turnaround time is average
+
+**Linux Implementation**
+- Uses red black tree
+- Default scheduler for the Linux kernel since the 2.6.23 release
+- Uses nanosecond granularity
+- Does not need heuristics to determine the interactivity of a process
+	- how often it hits up I/O
 
 ***Avg wait:*** Wait time / # of processes
 ***Avg turnaround time:*** Wait time + Burst time / # of processes
