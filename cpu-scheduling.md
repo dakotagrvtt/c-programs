@@ -46,5 +46,13 @@
 - Does not need heuristics to determine the interactivity of a process
 	- how often it hits up I/O
 
+**Dynamic Scheduling**
+- Processes are given time slices when executed
+- Everytime something hits I/O (while executing), priority goes up
+	- I/O = anything not CPU
+- If it hits CPU, priority goes down (while executing)
+- This only assumes **single core** processing
+	-	Most computers now have multiple cores/processors
+
 ***Avg wait:*** Wait time / # of processes
 ***Avg turnaround time:*** Wait time + Burst time / # of processes
