@@ -62,6 +62,11 @@ Physical - actual addresses in RAM
 
                 [Page 14 of chapter 16 slides]
 
-    Paging algorithm
+    Paging algorithm ***[slide 16 of chapter 16]***
         - Assume process has stream of pages it references (per process)
-        - FIFO [slide 16 of chapter 16]
+        - FIFO
+        - Optimal - replace page in mem that will not be used for the longest period
+            - requires entire page reference stream in advance (psychic CPUs are bad (Spector Meltdown))
+        - Least recently used:
+            - Replace page in mem that has not been used for the longest period
+            - Exploits locality of reference (temporal)
