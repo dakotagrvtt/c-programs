@@ -70,3 +70,27 @@ Physical - actual addresses in RAM
         - Least recently used:
             - Replace page in mem that has not been used for the longest period
             - Exploits locality of reference (temporal)
+    CPU Caching
+        - Cache is on chip memory
+        - Very fast and expensive
+            - Cache hit - Process immediately reads dat from or writes to cache
+            - Cache miss - cache allocates new entry readig in data from memory
+            - Cache lines: representation of block of memory in cache
+        - Data lookup is essentially free (1 clock cycle)
+        
+        - Assoc. Cache - Decides where mem goes in cache will go
+        - Full assoc. - replacemet policy may choose any entry
+        - Set assoc. - mem entries are mapped to specific loc. in cache
+        
+        - Memory Access
+            -   Uniform - Mem loc. accessedis independent of the process
+        - Non-uniform memory access (NUMA)
+            - Sys. where memory access time vary wildly (based on mem loc. relative to the processor)
+            - mem loc. accessed depends on the processor
+                - Every processor have it's own mem.
+                - Like tightly coupled cluster on 1 machine
+            - Used on x86 since 2007
+        - Cache Coherency
+            - Consistency of data of cache shared by local CPUs
+            - 3 levels
+            
