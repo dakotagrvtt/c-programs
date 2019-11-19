@@ -64,4 +64,4 @@ Physical - actual addresses in RAM
 
     Paging algorithm
         - Assume process has stream of pages it references (per process)
-        - FIFO 
+        - FIFO [slide 16 of chapter 16]
